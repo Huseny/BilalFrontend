@@ -1,9 +1,21 @@
 import Sidebar from "./sidebar";
-import { EditSectionModal, DeleteSectionModal } from "./Modals";
+import {
+  CreateSectionModal,
+  EditSectionModal,
+  DeleteSectionModal,
+} from "./Modals";
 import { useState } from "react";
 function CreateSection() {
+  const [sectionName, setSectionName] = useState("");
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const handleCloseModal = () => setShowSuccessModal(false);
+
+  const handleSubmit = () => {
+    setShowSuccessModal(true);
+  };
 
   const handleClosEditModal = () => setShowEditModal(false);
   const handleClosDeleteModal = () => setShowDeleteModal(false);
@@ -17,7 +29,7 @@ function CreateSection() {
   return (
     <>
       <Sidebar />
-      <section class="home-section">
+      <section className="home-section">
         <div id="content-wrapper" className="d-flex flex-column">
           <div className="container-fluid" id="container-wrapper">
             <div className="row">
@@ -35,7 +47,7 @@ function CreateSection() {
                           htmlFor="sectionName"
                           className="form-control-label"
                         >
-                          اسم الفصل<span class="text-danger ml-2">*</span>
+                          اسم الفصل<span className="text-danger ml-2">*</span>
                         </label>
                         <input
                           type="text"
@@ -43,18 +55,27 @@ function CreateSection() {
                           name="sectionName"
                           placeholder="اسم الفصل"
                           id="sectionName"
+                          value={sectionName}
+                          onChange={(e) => setSectionName(e.target.value)}
                         />
                       </div>
                       <button
                         id="createBtn"
                         name="save"
                         className="btn btn-primary"
+                        onClick={handleSubmit}
                       >
                         احفظ
                       </button>
+                      <CreateSectionModal
+                        name={sectionName}
+                        show={showSuccessModal}
+                        handleClose={handleCloseModal}
+                      />
                     </div>
                   </div>
                 </div>
+
                 <div className="row">
                   <div className="col-lg-12">
                     <div className="card mb-4">
