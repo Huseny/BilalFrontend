@@ -3,25 +3,55 @@ import {
   generateUsername,
   generatePassword,
 } from "../../utils/generateUsername";
-import { useState } from "react";
-import { ParentCredentialsModal } from "./Modals";
+import { useState, useEffect } from "react";
+import { ParentRegistrationModal } from "./Modals/parent";
+import { addParentRequest, getParents } from "../../utils/addParent";
 
 function AddParent() {
-  const [name, setName] = useState("");
-  const [credentials, setCredentials] = useState({
+  const [parentDetails, setParentDetails] = useState({
     username: "",
     password: "",
+    fullName: "",
+    sex: "",
+    phoneNo: "",
+    email: "",
+    address: "",
   });
+  const [parents, setParents] = useState([]);
   const [showModal, setShowModal] = useState(false);
 
   const handleCloseModal = () => setShowModal(false);
 
-  const handleSubmit = () => {
-    setCredentials({
-      username: generateUsername(name),
+  useEffect(() => {
+    async function fetchParents() {
+      let fetchedParents = await getParents();
+      setParents(fetchedParents);
+    }
+    fetchParents();
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setParentDetails({
+      ...parentDetails,
+      username: generateUsername(parentDetails.fullName),
       password: generatePassword(6),
     });
-    setShowModal(true);
+    try {
+      await addParentRequest(
+        parentDetails.username,
+        parentDetails.password,
+        parentDetails.fullName,
+        parentDetails.sex,
+        parentDetails.phoneNo,
+        parentDetails.email,
+        parentDetails.address
+      );
+      setShowModal(true);
+      setParents([...parents, parentDetails]);
+    } catch (err) {
+      console.error(err);
+    }
   };
   return (
     <>
@@ -36,11 +66,16 @@ function AddParent() {
                 </h2>
               </div>
               <div className="card-body">
-                <div>
+                <form onSubmit={(e) => handleSubmit(e)}>
                   <div className="form-group">
                     <label htmlFor="parentName">الاسم الكامل</label>
                     <input
-                      onChange={(e) => setName(e.target.value)}
+                      onChange={(e) =>
+                        setParentDetails({
+                          ...parentDetails,
+                          fullName: e.target.value,
+                        })
+                      }
                       type="text"
                       className="form-control"
                       id="parentName"
@@ -50,10 +85,20 @@ function AddParent() {
                   </div>
                   <div className="form-group">
                     <label htmlFor="parentGender">جنس</label>
-                    <select className="form-control" id="parentGender" required>
+                    <select
+                      className="form-control"
+                      id="parentGender"
+                      required
+                      onChange={(e) =>
+                        setParentDetails({
+                          ...parentDetails,
+                          sex: e.target.value,
+                        })
+                      }
+                    >
                       <option value="">اختر الجنس</option>
-                      <option value="Male">ذكر</option>
-                      <option value="Female">أنثى</option>
+                      <option value="ذكر">ذكر</option>
+                      <option value="أنثى">أنثى</option>
                     </select>
                   </div>
                   <div className="form-group">
@@ -63,6 +108,12 @@ function AddParent() {
                       className="form-control"
                       id="parentPhone"
                       placeholder="أدخل رقم الهاتف"
+                      onChange={(e) =>
+                        setParentDetails({
+                          ...parentDetails,
+                          phoneNo: e.target.value,
+                        })
+                      }
                       required
                     />
                   </div>
@@ -73,7 +124,14 @@ function AddParent() {
                       className="form-control"
                       id="parentEmail"
                       aria-describedby="emailHelp"
+                      required
                       placeholder="أدخل البريد الإلكتروني"
+                      onChange={(e) =>
+                        setParentDetails({
+                          ...parentDetails,
+                          email: e.target.value,
+                        })
+                      }
                     />
                   </div>
                   <div className="form-group">
@@ -83,23 +141,25 @@ function AddParent() {
                       id="parentAddress"
                       rows="3"
                       required
+                      onChange={(e) =>
+                        setParentDetails({
+                          ...parentDetails,
+                          address: e.target.value,
+                        })
+                      }
                     ></textarea>
                   </div>
                   <div className="py-2 text-center">
-                    <button
-                      onClick={handleSubmit}
-                      type="submit"
-                      className="btn btn-primary"
-                    >
+                    <button type="submit" className="btn btn-primary">
                       أرسل
                     </button>
-                    <ParentCredentialsModal
+                    <ParentRegistrationModal
                       show={showModal}
                       handleClose={handleCloseModal}
-                      credentials={credentials}
+                      info={parentDetails}
                     />
                   </div>
-                </div>
+                </form>
               </div>
             </div>
           </div>
@@ -113,10 +173,7 @@ function AddParent() {
                   </h6>
                 </div>
                 <div className="table-responsive p-3">
-                  <table
-                    className="table align-items-center table-flush table-hover"
-                    id="dataTableHover"
-                  >
+                  <table className="table align-items-center table-flush table-hover">
                     <thead className="thead-light">
                       <tr>
                         <th>#</th>
@@ -128,22 +185,17 @@ function AddParent() {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>1</td>
-                        <td>حسين يوسف</td>
-                        <td>ذكر</td>
-                        <td>0978251888</td>
-                        <td>husenyusuf876@gmail.com</td>
-                        <td>Addis Ababa</td>
-                      </tr>
-                      <tr>
-                        <td>2</td>
-                        <td>حسين يوسف</td>
-                        <td>ذكر</td>
-                        <td>0978251888</td>
-                        <td>husenyusuf876@gmail.com</td>
-                        <td>Addis Ababa</td>
-                      </tr>
+                      {parents.length > 0 &&
+                        parents.map((parent) => (
+                          <tr key={parent._id}>
+                            <td>{parents.indexOf(parent) + 1}</td>
+                            <td>{parent.fullName}</td>
+                            <td>{parent.sex}</td>
+                            <td>{parent.phoneNo}</td>
+                            <td>{parent.email}</td>
+                            <td>{parent.address}</td>
+                          </tr>
+                        ))}
                     </tbody>
                   </table>
                 </div>

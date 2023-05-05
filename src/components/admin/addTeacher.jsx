@@ -1,30 +1,50 @@
+import { useEffect } from "react";
 import { useState } from "react";
+import { CreateTeacher, GetTeachers } from "../../utils/addTeacher";
 import {
   generatePassword,
   generateUsername,
 } from "../../utils/generateUsername";
-import { TeacherCredentialsModal } from "./Modals";
+import { TeacherCredentialsModal } from "./Modals/teacher";
 import Sidebar from "./sidebar";
 
 function AddTeacher() {
   const [teacherInfo, setTeacherInfo] = useState({
+    username: "",
+    password: "",
     name: "",
     email: "",
     phoneNo: "",
     address: "",
   });
-  const [credentials, setCredentials] = useState({
-    username: "",
-    password: "",
-  });
+  const [teachers, setTeachers] = useState([]);
+
+  useEffect(() => {
+    async function fetchTeachers() {
+      setTeachers(await GetTeachers());
+    }
+    fetchTeachers();
+  }, []);
   const [showModal, setShowModal] = useState(false);
 
   const handleCloseModal = () => setShowModal(false);
 
-  const handleSubmit = () => {
-    setCredentials({
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setTeacherInfo({
+      ...teacherInfo,
       username: generateUsername(teacherInfo.name),
       password: generatePassword(6),
+    });
+    await CreateTeacher(teacherInfo);
+    setTeachers({ ...teachers, teacherInfo });
+    setTeacherInfo({
+      username: "",
+      password: "",
+      name: "",
+      email: "",
+      phoneNo: "",
+      address: "",
     });
     setShowModal(true);
   };
@@ -41,7 +61,7 @@ function AddTeacher() {
                 </h2>
               </div>
               <div className="card-body">
-                <div>
+                <form onSubmit={(e) => handleSubmit(e)}>
                   <div className="form-group">
                     <label htmlFor="teacherName">الاسم الكامل</label>
                     <input
@@ -103,20 +123,16 @@ function AddTeacher() {
                     ></textarea>
                   </div>
                   <div className="py-2 text-center">
-                    <button
-                      type="submit"
-                      className="btn btn-primary"
-                      onClick={handleSubmit}
-                    >
+                    <button type="submit" className="btn btn-primary">
                       أرسل
                     </button>
                   </div>
                   <TeacherCredentialsModal
-                    credentials={credentials}
+                    teacherInfo={teacherInfo}
                     show={showModal}
                     handleClose={handleCloseModal}
                   />
-                </div>
+                </form>
               </div>
             </div>
             <div className="row">
@@ -140,20 +156,16 @@ function AddTeacher() {
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td>1</td>
-                          <td>حسين يوسف</td>
-                          <td>0978251888</td>
-                          <td>husenyusuf876@gmail.com</td>
-                          <td>Addis Ababa, Ethiopia</td>
-                        </tr>
-                        <tr>
-                          <td>2</td>
-                          <td>حسين يوسف</td>
-                          <td>0978251888</td>
-                          <td>husenyusuf876@gmail.com</td>
-                          <td>Addis Ababa, Ethiopia</td>
-                        </tr>
+                        {teachers.length > 0 &&
+                          teachers.map((teacher) => (
+                            <tr key={teacher._id}>
+                              <td>{teachers.indexOf(teacher) + 1}</td>
+                              <td>{teacher.ustazName}</td>
+                              <td>{teacher.phoneNo}</td>
+                              <td>{teacher.email}</td>
+                              <td>{teacher.address}</td>
+                            </tr>
+                          ))}
                       </tbody>
                     </table>
                   </div>

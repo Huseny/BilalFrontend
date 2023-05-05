@@ -112,24 +112,6 @@ function Home() {
                 </Link>
               </div>
               <div className="col-md-6 mb-4">
-                <Link className="links" to="/admin/report">
-                  <div className="card h-100 mr-4 links">
-                    <div className="card-body">
-                      <div className="row no-gutters align-items-center">
-                        <div className="col mr-2">
-                          <div className="text-xs font-weight-bold text-uppercase mb-1 links_text">
-                            التقارير
-                          </div>
-                        </div>
-                        <div className="col-auto">
-                          <i className="fas fa-file fa-2x"></i>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              </div>
-              <div className="col-md-6 mb-4">
                 <Link className="links" to="/admin/addExam">
                   <div className="card h-100 mr-4 links">
                     <div className="card-body">
@@ -141,6 +123,24 @@ function Home() {
                         </div>
                         <div className="col-auto">
                           <i className="fas fa-globe fa-2x"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+              <div className="col-md-6 mb-4">
+                <Link className="links" to="/admin/report">
+                  <div className="card h-100 mr-4 links">
+                    <div className="card-body">
+                      <div className="row no-gutters align-items-center">
+                        <div className="col mr-2">
+                          <div className="text-xs font-weight-bold text-uppercase mb-1 links_text">
+                            التقارير
+                          </div>
+                        </div>
+                        <div className="col-auto">
+                          <i className="fas fa-file fa-2x"></i>
                         </div>
                       </div>
                     </div>

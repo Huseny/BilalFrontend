@@ -3,7 +3,7 @@ import {
   CreateSemesterModal,
   EditSemesterModal,
   DeleteSemesterModal,
-} from "./Modals";
+} from "./Modals/semester";
 import { useState } from "react";
 function CreateSemester() {
   const [semesterInfo, setSemesterInfo] = useState({

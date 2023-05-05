@@ -1,6 +1,7 @@
 function logout() {
-  console.log(localStorage.getItem("email"));
-  localStorage.removeItem("email");
+  localStorage.removeItem("access_token");
+  localStorage.removeItem("refresh_token");
+  localStorage.removeItem("role");
 }
 
 export default logout;

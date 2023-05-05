@@ -3,17 +3,31 @@ import {
   CreateSectionModal,
   EditSectionModal,
   DeleteSectionModal,
-} from "./Modals";
+} from "./Modals/section";
 import { useState } from "react";
+import { createClassRequest, getSections } from "../../utils/createClass";
+import { useEffect } from "react";
 function CreateSection() {
   const [sectionName, setSectionName] = useState("");
+  const [sectionId, setSectionId] = useState("");
+  const [sections, setSections] = useState([]);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const handleCloseModal = () => setShowSuccessModal(false);
 
-  const handleSubmit = () => {
+  useEffect(() => {
+    async function fetchSections() {
+      let fetchedSections = await getSections();
+      setSections(fetchedSections);
+    }
+    fetchSections();
+  }, [sections]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await createClassRequest(sectionName);
     setShowSuccessModal(true);
   };
 
@@ -41,7 +55,7 @@ function CreateSection() {
                     </h2>
                   </div>
                   <div className="card-body">
-                    <div>
+                    <form onSubmit={(e) => handleSubmit(e)}>
                       <div className="form-group mb-3">
                         <label
                           htmlFor="sectionName"
@@ -63,7 +77,6 @@ function CreateSection() {
                         id="createBtn"
                         name="save"
                         className="btn btn-primary"
-                        onClick={handleSubmit}
                       >
                         احفظ
                       </button>
@@ -72,7 +85,7 @@ function CreateSection() {
                         show={showSuccessModal}
                         handleClose={handleCloseModal}
                       />
-                    </div>
+                    </form>
                   </div>
                 </div>
 
@@ -101,23 +114,37 @@ function CreateSection() {
                           </thead>
 
                           <tbody>
-                            <tr>
-                              <td>1</td>
-                              <td>Ibn Mes'ud</td>
-                              <td>23-08-2023</td>
-                              <td>
-                                <i
-                                  onClick={handleEdit}
-                                  className="fas fa-fw fa-edit"
-                                ></i>
-                              </td>
-                              <td>
-                                <i
-                                  onClick={handleDelete}
-                                  className="fas fa-fw fa-trash"
-                                ></i>
-                              </td>
-                            </tr>
+                            {sections.length > 0 &&
+                              sections.map((section) => (
+                                <tr key={section._id}>
+                                  <td>{sections.indexOf(section) + 1}</td>
+                                  <td>{section.className}</td>
+                                  <td>
+                                    {section.dateCreated.split("-")[2][0]}
+                                    {section.dateCreated.split("-")[2][1]}/
+                                    {section.dateCreated.split("-")[1]}/
+                                    {section.dateCreated.split("-")[0]}
+                                  </td>
+                                  <td>
+                                    <i
+                                      onClick={() => {
+                                        setSectionId(section._id);
+                                        handleEdit();
+                                      }}
+                                      className="fas fa-fw fa-edit"
+                                    ></i>
+                                  </td>
+                                  <td>
+                                    <i
+                                      onClick={() => {
+                                        setSectionId(section._id);
+                                        handleDelete();
+                                      }}
+                                      className="fas fa-fw fa-trash"
+                                    ></i>
+                                  </td>
+                                </tr>
+                              ))}
                           </tbody>
                         </table>
                       </div>
@@ -130,12 +157,14 @@ function CreateSection() {
         </div>
         <EditSectionModal
           show={showEditModal}
-          sectionId={0}
+          sectionId={sectionId}
+          setSections={setSections}
           handleClose={handleClosEditModal}
         />
         <DeleteSectionModal
           show={showDeleteModal}
-          sectionId={0}
+          sectionId={sectionId}
+          setSections={setSections}
           handleClose={handleClosDeleteModal}
         />
       </section>

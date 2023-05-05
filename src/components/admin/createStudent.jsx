@@ -1,6 +1,21 @@
 import { useState } from "react";
 import Sidebar from "./sidebar";
-import { StudentRegistrationModal } from "./Modals";
+import { StudentRegistrationModal } from "./Modals/student";
+import { useEffect } from "react";
+import { getClassById, getSections } from "../../utils/createClass";
+import { GetParentById, getParents } from "../../utils/addParent";
+import { CreateStudentRequest, GetStudents } from "../../utils/createStudent";
+
+async function getStudentsWithParents(students) {
+  const studentsWithParents = [];
+  for (const student of students) {
+    const parentName = (await GetParentById(student.ChooseParent)).fullName;
+    const className = (await getClassById(student.chooseClass)).className;
+    const studentWithParent = { ...student, parentName, className };
+    studentsWithParents.push(studentWithParent);
+  }
+  return studentsWithParents;
+}
 
 function CreateStudent() {
   const [showModal, setShowModal] = useState(false);
@@ -19,11 +34,30 @@ function CreateStudent() {
     parent: "",
     section: "",
   });
+  const [sections, setSections] = useState([]);
+  const [parents, setParents] = useState([]);
+  const [students, setStudents] = useState([]);
+  const [studentsWithParents, setStudentsWithParents] = useState([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      setSections(await getSections());
+      setParents(await getParents());
+      const fetchedStudents = await GetStudents();
+      setStudents(fetchedStudents);
+      const studentsWithParents = await getStudentsWithParents(fetchedStudents);
+      setStudentsWithParents(studentsWithParents);
+    }
+    fetchData();
+  }, []);
 
   const handleCloseModal = () => setShowModal(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await CreateStudentRequest(studentInfo);
     setShowModal(true);
+    setStudents([...students, studentInfo]);
   };
 
   return (
@@ -39,7 +73,7 @@ function CreateStudent() {
                 </h2>
               </div>
               <div className="card-body">
-                <div>
+                <form onSubmit={(e) => handleSubmit(e)}>
                   <div className="form-group">
                     <label htmlFor="studentName">الاسم الكامل</label>
                     <input
@@ -220,10 +254,12 @@ function CreateStudent() {
                       id="studentParent"
                       required
                     >
-                      <option value="Husen Yusuf">Husen Yusuf</option>
-                      <option value="Shemsu Nurye">Shemsu Nurye</option>
-                      <option value="Abdulmelik Ambaw">Abdulmelik Ambaw</option>
-                      <option value="Amir Ahmedin">Amir Ahmedin</option>
+                      <option value="">اختر الوالد</option>
+                      {parents.map((parent) => (
+                        <option key={parent._id} value={parent._id}>
+                          {parent.fullName}
+                        </option>
+                      ))}
                     </select>
                   </div>
                   <div className="form-group">
@@ -239,17 +275,16 @@ function CreateStudent() {
                       id="studentSection"
                       required
                     >
-                      <option value="Husen Yusuf">Ibn Mes'ud</option>
-                      <option value="Shemsu Nurye">Ibn Abbas</option>
-                      <option value="Abdulmelik Ambaw">Ibn Kathir</option>
+                      <option value="">اختر فصل</option>
+                      {sections.map((section) => (
+                        <option key={section._id} value={section._id}>
+                          {section.className}
+                        </option>
+                      ))}
                     </select>
                   </div>
                   <div className="py-2 text-center">
-                    <button
-                      type="submit"
-                      className="btn btn-primary"
-                      onClick={handleSubmit}
-                    >
+                    <button type="submit" className="btn btn-primary">
                       أرسل
                     </button>
                     <StudentRegistrationModal
@@ -258,7 +293,7 @@ function CreateStudent() {
                       handleClose={handleCloseModal}
                     />
                   </div>
-                </div>
+                </form>
               </div>
             </div>
 
@@ -267,7 +302,7 @@ function CreateStudent() {
                 <div className="card mb-4">
                   <div className="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 className="m-0 font-weight-bold text-primary">
-                      قائمة الوالدين المسجلين
+                      قائمة الطلاب المسجلين
                     </h6>
                   </div>
 
@@ -278,28 +313,25 @@ function CreateStudent() {
                           <th>#</th>
                           <th>الاسم الكامل</th>
                           <th>جنس</th>
-                          <th>رقم التليفون</th>
-                          <th>البريد الإلكتروني</th>
-                          <th>عنوان</th>
+                          <th>عمر</th>
+                          <th>الوالد</th>
+                          <th>فصل</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td>1</td>
-                          <td>حسين يوسف</td>
-                          <td>ذكر</td>
-                          <td>0978251888</td>
-                          <td>husenyusuf876@gmail.com</td>
-                          <td>Addis Ababa</td>
-                        </tr>
-                        <tr>
-                          <td>2</td>
-                          <td>حسين يوسف</td>
-                          <td>ذكر</td>
-                          <td>0978251888</td>
-                          <td>husenyusuf876@gmail.com</td>
-                          <td>Addis Ababa</td>
-                        </tr>
+                        {studentsWithParents.length > 0 &&
+                          studentsWithParents.map((oneStudent) => (
+                            <tr key={oneStudent._id}>
+                              <td>
+                                {studentsWithParents.indexOf(oneStudent) + 1}
+                              </td>
+                              <td>{oneStudent.fullName}</td>
+                              <td>{oneStudent.sex}</td>
+                              <td>{oneStudent.age}</td>
+                              <td>{oneStudent.parentName}</td>
+                              <td>{oneStudent.className}</td>
+                            </tr>
+                          ))}
                       </tbody>
                     </table>
                   </div>

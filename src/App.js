@@ -16,6 +16,12 @@ import {
   TeacherReport,
 } from "./components/teacher";
 
+import {
+  ParentHome,
+  ParentAttendanceReport,
+  ParentGradeReport,
+} from "./components/parent";
+
 import Login from "./components/login";
 import "bootstrap/dist/css/bootstrap.css";
 
@@ -37,6 +43,14 @@ function App() {
         <Route path="/teacher/attendance" element={<Attendance />} />
         <Route path="/teacher/muraja" element={<Muraja />} />
         <Route path="/teacher/report" element={<TeacherReport />} />
+
+        <Route path="/parent/" element={<ParentHome />} />
+        <Route
+          path="/parent/attendanceReport"
+          element={<ParentAttendanceReport />}
+        />
+        <Route path="/parent/gradeReport" element={<ParentGradeReport />} />
+
         <Route path="*" element={<Login />} />
       </Routes>
     </>

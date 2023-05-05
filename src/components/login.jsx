@@ -1,21 +1,30 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/login.css";
+import LoginRequest from "../utils/login";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const [showError, setShowError] = useState(false);
 
-  const handleLogin = () => {
-    if (username === "admin" && password === "admin") {
-      localStorage.setItem("email", username);
-      navigate("/admin/");
-    } else if (username === "teacher" && password === "teacher") {
-      localStorage.setItem("email", username);
-      navigate("/teacher/");
+  useEffect(() => {
+    const role = localStorage.getItem("role");
+    if (role !== null) {
+      navigate(`/${role}/`);
+    }
+  }, [navigate]);
+
+  const handleLogin = async () => {
+    let result = await LoginRequest(username, password);
+    if (result) {
+      localStorage.setItem("access_token", result.access_token);
+      localStorage.setItem("refresh_token", result.refresh_token);
+      localStorage.setItem("role", result.role);
+      navigate(`/${result.role}/`);
     } else {
-      alert("Invalid credentials!");
+      setShowError(true);
     }
   };
 
@@ -40,7 +49,19 @@ function Login() {
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        <button onClick={handleLogin} id="login">
+        {showError && (
+          <div>
+            <p className="text-warning">
+              something went wrong. Please try again
+            </p>
+          </div>
+        )}
+
+        <button
+          onClick={handleLogin}
+          className={!showError && "mt-5"}
+          id="login"
+        >
           تسجيل الدخول
         </button>
       </div>
