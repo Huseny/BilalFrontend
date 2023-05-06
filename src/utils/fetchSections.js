@@ -2,12 +2,30 @@ import getRootUrl from "./api";
 import refreshToken from "./refreshToken";
 
 export async function fetchSections() {
-  const response = await fetch(`${getRootUrl()}/main/getallsections`, {
-    method: "GET",
+  let assignedTeacher = await fetch(`${getRootUrl()}/auth/getInformation`, {
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${localStorage.getItem("access_token")}`,
     },
+  });
+  if (assignedTeacher.status === 401 && localStorage.getItem("access_token")) {
+    await refreshToken();
+    fetchSections();
+  } else {
+    assignedTeacher = await assignedTeacher.json();
+    assignedTeacher = assignedTeacher._id;
+  }
+  console.log(assignedTeacher);
+  const response = await fetch(`${getRootUrl()}/main/getassignedsections`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+    },
+    body: JSON.stringify({
+      assignedTeacher,
+    }),
   });
   if (response.status === 401 && localStorage.getItem("access_token")) {
     await refreshToken();

@@ -69,9 +69,11 @@ function CreateSection() {
   const handleAddTeacher = (sectionId) => {
     setAssignSectionId(sectionId);
     setShowAssignModal(true);
+  };
+  const handleCloseAssign = () => {
+    setShowAssignModal(false);
     setChanged(!changed);
   };
-  const handleCloseAssign = () => setShowAssignModal(false);
   return (
     <>
       <Sidebar />

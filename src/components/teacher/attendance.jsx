@@ -13,19 +13,19 @@ function Attendance() {
   const [students, setStudents] = useState([]);
   const [checkedStudents, setCheckedStudents] = useState([]);
 
-  useEffect(() => {
-    async function fetchWhatever() {
-      setFetchedSections(await fetchSections());
-    }
-    fetchWhatever();
-  }, []);
+  // useEffect(() => {
+  //   async function fetchWhatever() {
+  //     setFetchedSections(await fetchSections());
+  //   }
+  //   fetchWhatever();
+  // }, []);
 
-  useEffect(() => {
-    async function whatever() {
-      setStudents(await fetchStudentsBySection(selectedSection));
-    }
-    whatever();
-  }, [selectedSection]);
+  // useEffect(() => {
+  //   async function whatever() {
+  //     setStudents(await fetchStudentsBySection(selectedSection));
+  //   }
+  //   whatever();
+  // }, [selectedSection]);
 
   const handleAttendanceChecked = (e, studentId) => {
     if (e.target.checked) {
@@ -69,7 +69,7 @@ function Attendance() {
                                 value={section._id}
                                 className="text-center"
                               >
-                                {section.sectionName}
+                                {section.className}
                               </option>
                             );
                           })}
@@ -98,6 +98,7 @@ function Attendance() {
                           students.length > 0 &&
                           students.map(async (student, index) => (
                             <tr key={student._id}>
+                              {console.log(student)}
                               <td>{index + 1}</td>
                               <td>{student.fullName}</td>
                               <td>{student.age}</td>

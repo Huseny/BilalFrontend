@@ -38,6 +38,7 @@ function CreateStudent() {
   const [parents, setParents] = useState([]);
   const [students, setStudents] = useState([]);
   const [studentsWithParents, setStudentsWithParents] = useState([]);
+  const [changed, setChanged] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -51,7 +52,10 @@ function CreateStudent() {
     fetchData();
   }, []);
 
-  const handleCloseModal = () => setShowModal(false);
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setChanged(!changed);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
