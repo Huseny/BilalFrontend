@@ -18,32 +18,25 @@ function Sidebar() {
       </div>
       <ul className="nav-list">
         <li>
-          <Link to="/teacher/">
+          <Link to="/parent/">
             <i className="bx bx-grid-alt"></i>
-            <span className="links_name">لوحة تحكم المعلم</span>
+            <span className="links_name">لوحة تحكم</span>
           </Link>
-          <span className="tooltip">لوحة تحكم المعلم</span>
+          <span className="tooltip">لوحة تحكم</span>
         </li>
         <li>
-          <Link to="/teacher/attendance">
+          <Link to="/parent/attendanceReport">
             <i className="bx bx-user"></i>
-            <span className="links_name">خذ الحضور</span>
+            <span className="links_name">تقرير الحضور</span>
           </Link>
-          <span className="tooltip">خذ الحضور</span>
+          <span className="tooltip">تقرير الحضور</span>
         </li>
         <li>
-          <Link to="/teacher/muraja">
-            <i className="bx bx-user-circle"></i>
-            <span className="links_name">إجراء التقييم</span>
+          <Link to="/parent/gradeReport">
+            <i className="bx bx-report"></i>
+            <span className="links_name">تقرير الرتبة</span>
           </Link>
-          <span className="tooltip">إجراء التقييم</span>
-        </li>
-        <li>
-          <Link to="/teacher/report">
-            <i className="bx bxs-report"></i>
-            <span className="links_name">التقارير</span>
-          </Link>
-          <span className="tooltip">التقارير</span>
+          <span className="tooltip">تقرير الرتبة</span>
         </li>
         <li className="profile">
           <Link onClick={logout} to="/">

@@ -19,6 +19,7 @@ function AddParent() {
   });
   const [parents, setParents] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [created, setCreated] = useState(false);
 
   const handleCloseModal = () => setShowModal(false);
 
@@ -28,7 +29,7 @@ function AddParent() {
       setParents(fetchedParents);
     }
     fetchParents();
-  }, []);
+  }, [created]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -49,6 +50,7 @@ function AddParent() {
       );
       setShowModal(true);
       setParents([...parents, parentDetails]);
+      setCreated(!created);
     } catch (err) {
       console.error(err);
     }

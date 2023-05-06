@@ -1,7 +1,9 @@
+import { useEffect } from "react";
 import { useState } from "react";
 import { Modal, Button } from "react-bootstrap";
 import { changeSection, deleteSection } from "../../../utils/createClass";
 import { getSections } from "../../../utils/createClass";
+import { AssignTeacherRequest, GetTeachers } from "../../../utils/addTeacher";
 
 export function CreateSectionModal({ name, show, handleClose }) {
   return (
@@ -95,6 +97,54 @@ export function DeleteSectionModal({
         </Button>
         <Button variant="primary" onClick={handleSubmit}>
           نعم
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+}
+
+export function AssignTeacherModal({ sectionId, show, handleClose }) {
+  const [teachers, setTeachers] = useState([]);
+  const [choosenTeacher, setChoosenTeacher] = useState("");
+
+  useEffect(() => {
+    async function fetchTeachers() {
+      setTeachers(await GetTeachers());
+    }
+    fetchTeachers();
+  }, []);
+
+  const handleAssignment = async () => {
+    await AssignTeacherRequest(sectionId, choosenTeacher);
+    handleClose();
+  };
+  return (
+    <Modal show={show} onHide={handleClose}>
+      <Modal.Header closeButton>
+        <Modal.Title>اضافة مدرس</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <p className="card-header py-3 text-center">اختر المعلم</p>
+        <select
+          onChange={(e) => setChoosenTeacher(e.target.value)}
+          name="teachers"
+          id="teachers"
+          className="form-control"
+        >
+          <option value="">اختر المعلم</option>
+          {teachers.map((teacher) => (
+            <option key={teacher._id} value={teacher._id}>
+              {teacher.ustazName}
+            </option>
+          ))}
+        </select>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={handleClose}>
+          إلغاء
+        </Button>
+        <Button variant="primary" onClick={handleAssignment}>
+          اختر
         </Button>
       </Modal.Footer>
     </Modal>

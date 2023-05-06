@@ -3,10 +3,28 @@ import {
   CreateSectionModal,
   EditSectionModal,
   DeleteSectionModal,
+  AssignTeacherModal,
 } from "./Modals/section";
 import { useState } from "react";
 import { createClassRequest, getSections } from "../../utils/createClass";
 import { useEffect } from "react";
+import { GetTeacherById } from "../../utils/addTeacher";
+
+async function getAssignedTeacher(classes) {
+  let classesWithTeachers = [];
+  for (const section of classes) {
+    if (section.assignedTeacher && section.assignedTeacher !== "") {
+      const theTeacher = (await GetTeacherById(section.assignedTeacher))
+        .ustazName;
+      const classWithTeacher = { ...section, theTeacher };
+      classesWithTeachers.push(classWithTeacher);
+    } else {
+      classesWithTeachers.push(section);
+    }
+  }
+  return classesWithTeachers;
+}
+
 function CreateSection() {
   const [sectionName, setSectionName] = useState("");
   const [sectionId, setSectionId] = useState("");
@@ -14,21 +32,26 @@ function CreateSection() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [changed, setChanged] = useState(false);
+  const [showAssignModal, setShowAssignModal] = useState(false);
+  const [assignSectionId, setAssignSectionId] = useState("");
 
   const handleCloseModal = () => setShowSuccessModal(false);
 
   useEffect(() => {
     async function fetchSections() {
       let fetchedSections = await getSections();
-      setSections(fetchedSections);
+      let classesWithTeacher = await getAssignedTeacher(fetchedSections);
+      setSections(classesWithTeacher);
     }
     fetchSections();
-  }, [sections]);
+  }, [changed]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     await createClassRequest(sectionName);
     setShowSuccessModal(true);
+    setChanged(!changed);
   };
 
   const handleClosEditModal = () => setShowEditModal(false);
@@ -36,10 +59,19 @@ function CreateSection() {
 
   const handleEdit = () => {
     setShowEditModal(true);
+    setChanged(!changed);
   };
   const handleDelete = () => {
     setShowDeleteModal(true);
+    setChanged(!changed);
   };
+
+  const handleAddTeacher = (sectionId) => {
+    setAssignSectionId(sectionId);
+    setShowAssignModal(true);
+    setChanged(!changed);
+  };
+  const handleCloseAssign = () => setShowAssignModal(false);
   return (
     <>
       <Sidebar />
@@ -80,12 +112,12 @@ function CreateSection() {
                       >
                         احفظ
                       </button>
-                      <CreateSectionModal
-                        name={sectionName}
-                        show={showSuccessModal}
-                        handleClose={handleCloseModal}
-                      />
                     </form>
+                    <CreateSectionModal
+                      name={sectionName}
+                      show={showSuccessModal}
+                      handleClose={handleCloseModal}
+                    />
                   </div>
                 </div>
 
@@ -108,6 +140,7 @@ function CreateSection() {
                               <th>#</th>
                               <th>اسم الفصل</th>
                               <th>تاريخ الإنشاء</th>
+                              <th>المعلم المعين</th>
                               <th>تغيير</th>
                               <th>حذف</th>
                             </tr>
@@ -124,6 +157,21 @@ function CreateSection() {
                                     {section.dateCreated.split("-")[2][1]}/
                                     {section.dateCreated.split("-")[1]}/
                                     {section.dateCreated.split("-")[0]}
+                                  </td>
+                                  <td>
+                                    {section.assignedTeacher &&
+                                    section.assignedTeacher !== "" ? (
+                                      section.theTeacher
+                                    ) : (
+                                      <btn
+                                        onClick={() =>
+                                          handleAddTeacher(section._id)
+                                        }
+                                        className="btn btn-primary"
+                                      >
+                                        اضافة مدرس
+                                      </btn>
+                                    )}
                                   </td>
                                   <td>
                                     <i
@@ -155,6 +203,11 @@ function CreateSection() {
             </div>
           </div>
         </div>
+        <AssignTeacherModal
+          show={showAssignModal}
+          handleClose={handleCloseAssign}
+          sectionId={assignSectionId}
+        />
         <EditSectionModal
           show={showEditModal}
           sectionId={sectionId}

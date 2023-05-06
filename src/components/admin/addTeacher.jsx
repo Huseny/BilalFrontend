@@ -1,6 +1,10 @@
 import { useEffect } from "react";
 import { useState } from "react";
-import { CreateTeacher, GetTeachers } from "../../utils/addTeacher";
+import {
+  CreateTeacher,
+  DeleteTeacher,
+  GetTeachers,
+} from "../../utils/addTeacher";
 import {
   generatePassword,
   generateUsername,
@@ -18,13 +22,15 @@ function AddTeacher() {
     address: "",
   });
   const [teachers, setTeachers] = useState([]);
+  const [created, setCreated] = useState(false);
 
   useEffect(() => {
     async function fetchTeachers() {
       setTeachers(await GetTeachers());
     }
     fetchTeachers();
-  }, []);
+  }, [created]);
+
   const [showModal, setShowModal] = useState(false);
 
   const handleCloseModal = () => setShowModal(false);
@@ -38,15 +44,13 @@ function AddTeacher() {
     });
     await CreateTeacher(teacherInfo);
     setTeachers({ ...teachers, teacherInfo });
-    setTeacherInfo({
-      username: "",
-      password: "",
-      name: "",
-      email: "",
-      phoneNo: "",
-      address: "",
-    });
+    setCreated(!created);
     setShowModal(true);
+  };
+
+  const handleDelete = async (teacherId) => {
+    await DeleteTeacher(teacherId);
+    setCreated(!created);
   };
   return (
     <>
@@ -153,6 +157,7 @@ function AddTeacher() {
                           <th>رقم الهاتف</th>
                           <th>البريد الإلكتروني</th>
                           <th>عنوان</th>
+                          <td>حذف</td>
                         </tr>
                       </thead>
                       <tbody>
@@ -164,6 +169,12 @@ function AddTeacher() {
                               <td>{teacher.phoneNo}</td>
                               <td>{teacher.email}</td>
                               <td>{teacher.address}</td>
+                              <td>
+                                <i
+                                  className="fas fa-fw fa-trash"
+                                  onClick={() => handleDelete(teacher._id)}
+                                ></i>
+                              </td>
                             </tr>
                           ))}
                       </tbody>

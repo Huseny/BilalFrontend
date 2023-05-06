@@ -1,9 +1,11 @@
 import "./styles/home.css";
+import Sidebar from "./sidebar";
 import { Link } from "react-router-dom";
 import logout from "../../utils/logout";
 function Home() {
   return (
     <>
+      <Sidebar />
       <section className="home-section">
         <div className="d-flex flex-column">
           <div className="container-fluid">
@@ -26,11 +28,11 @@ function Home() {
                       <div className="row no-gutters align-items-center">
                         <div className="col mr-2">
                           <div className="text-xs font-weight-bold text-uppercase mb-1 links_text">
-                            خذ الحضور
+                            خذ الحضور{" "}
                           </div>
                         </div>
                         <div className="col-auto">
-                          <i className="fas fa-user fa-2x"></i>
+                          <i className="fas fa-coffee fa-2x"></i>
                         </div>
                       </div>
                     </div>
@@ -48,7 +50,7 @@ function Home() {
                           </div>
                         </div>
                         <div className="col-auto">
-                          <i className="fas fa-users fa-2x"></i>
+                          <i className="fas fa-chalkboard fa-2x"></i>
                         </div>
                       </div>
                     </div>
@@ -56,7 +58,7 @@ function Home() {
                 </Link>
               </div>
               <div className="col-md-6 mb-4">
-                <Link className="links" to="/teacher/reports">
+                <Link className="links" to="/teacher/report">
                   <div className="card h-100 mr-4 links">
                     <div className="card-body">
                       <div className="row no-gutters align-items-center">

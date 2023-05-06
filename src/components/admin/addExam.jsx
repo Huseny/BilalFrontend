@@ -1,12 +1,21 @@
 import React, { useState } from "react";
+import { useEffect } from "react";
+import { CreateExam, GetExams } from "../../utils/addExam";
 import Sidebar from "./sidebar";
 
 const AddExam = () => {
   const [evaluationName, setEvaluationName] = useState("");
   const [fields, setFields] = useState([]);
   const [evaluations, setEvaluations] = useState([]);
-
+  const [changed, setChanged] = useState(false);
   const [newField, setNewField] = useState({ name: "", type: "", options: "" });
+
+  useEffect(() => {
+    async function fetchEval() {
+      setEvaluations(await GetExams());
+    }
+    fetchEval();
+  }, [changed]);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -20,9 +29,11 @@ const AddExam = () => {
     setNewField({ name: "", type: "", options: "" });
   };
 
-  const handleAddNewEvaluation = (event) => {
+  const handleAddNewEvaluation = async (event) => {
     if (!evaluationName || fields.length === 0) return;
-    const newEvaluation = { name: evaluationName, fields };
+    const newEvaluation = { name: evaluationName, fields: fields };
+    await CreateExam(newEvaluation);
+    setChanged(!changed);
     setEvaluations((prevState) => [...prevState, newEvaluation]);
     setEvaluationName("");
     setFields([]);
@@ -142,29 +153,60 @@ const AddExam = () => {
                   >
                     إضافة تقييم جديد
                   </button>
-                  {evaluations.length > 0 && (
-                    <div>
-                      <h5 className="mb-2 font-weight-bold">
-                        التقييمات المضافة:
-                      </h5>
-                      <ul className="list-group">
-                        {evaluations.map((evaluation, index) => (
-                          <li key={index} className="list-group-item">
-                            <h6 className="font-weight-bold">
-                              {evaluation.name}
-                            </h6>
-                            <ul>
-                              {evaluation.fields.map((field, index) => (
-                                <li key={index}>
-                                  {field.name} ({field.type})
-                                </li>
-                              ))}
-                            </ul>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-lg-12">
+              <div className="card mb-4">
+                <div className="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                  <h6 className="m-0 font-weight-bold text-primary">
+                    قائمة التقييمات المضافة
+                  </h6>
+                </div>
+                <div className="table-responsive p-3">
+                  <table className="table align-items-center table-flush table-hover">
+                    <thead className="thead-light">
+                      <tr>
+                        <th>#</th>
+                        <th>اسم التقييم</th>
+                        <th>الحقول</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {evaluations.length > 0 && (
+                        <>
+                          {evaluations.map((evaluation, index) => (
+                            <>
+                              <tr key={evaluation._id}>
+                                <td>{index + 1}</td>
+                                <td>{evaluation.name}</td>
+                                <td>
+                                  <ul>
+                                    {evaluation.fields.map((field) => (
+                                      <li>
+                                        {field.name} ({field.type})
+                                        {field.type === "select" && (
+                                          <ul style={{ marginRight: "25px" }}>
+                                            {field.options
+                                              .split("\n")
+                                              .map((option) => (
+                                                <li>{option}</li>
+                                              ))}
+                                          </ul>
+                                        )}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </td>
+                              </tr>
+                            </>
+                          ))}
+                        </>
+                      )}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
