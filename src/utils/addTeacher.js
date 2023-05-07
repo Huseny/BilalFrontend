@@ -1,7 +1,7 @@
 import getRootUrl from "./api";
 import refreshToken from "./refreshToken";
 
-export async function CreateTeacher(teacherInfo) {
+export async function CreateTeacher(username, password, teacherInfo) {
   let result = await fetch(`${getRootUrl()}/auth/signup/ustaz`, {
     method: "POST",
     headers: {
@@ -9,8 +9,8 @@ export async function CreateTeacher(teacherInfo) {
       Authorization: `Bearer ${localStorage.getItem("access_token")}`,
     },
     body: JSON.stringify({
-      username: teacherInfo.username,
-      password: teacherInfo.password,
+      username,
+      password,
       name: teacherInfo.name,
       phoneno: teacherInfo.phoneNo,
       email: teacherInfo.email,

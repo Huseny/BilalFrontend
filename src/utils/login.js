@@ -1,6 +1,5 @@
 import getRootUrl from "./api";
 async function LoginRequest(name, password) {
-  console.log(`name: ${name}\npass: ${password}`);
   let result = await fetch(`${getRootUrl()}/auth/login`, {
     method: "POST",
     headers: {

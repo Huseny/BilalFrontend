@@ -20,6 +20,12 @@ export function TeacherCredentialsModal({ show, handleClose, teacherInfo }) {
         <p>
           البريد الإلكتروني: <b>{teacherInfo.email}</b>
         </p>
+        <p>
+          اسم المستخدم: <b>{teacherInfo.username}</b>
+        </p>
+        <p>
+          كلمة المرور: <b>{teacherInfo.password}</b>
+        </p>
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={handleClose}>

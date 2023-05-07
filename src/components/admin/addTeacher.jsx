@@ -1,10 +1,6 @@
 import { useEffect } from "react";
 import { useState } from "react";
-import {
-  CreateTeacher,
-  DeleteTeacher,
-  GetTeachers,
-} from "../../utils/addTeacher";
+import { CreateTeacher, GetTeachers } from "../../utils/addTeacher";
 import {
   generatePassword,
   generateUsername,
@@ -37,21 +33,23 @@ function AddTeacher() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setTeacherInfo({
-      ...teacherInfo,
-      username: generateUsername(teacherInfo.name),
-      password: generatePassword(6),
-    });
-    await CreateTeacher(teacherInfo);
-    setTeachers({ ...teachers, teacherInfo });
-    setCreated(!created);
-    setShowModal(true);
+    try {
+      const username = generateUsername(teacherInfo.name);
+      const password = generatePassword(6);
+      await CreateTeacher(username, password, teacherInfo);
+      setTeacherInfo({
+        ...teacherInfo,
+        username: username,
+        password: password,
+      });
+      setTeachers({ ...teachers, teacherInfo });
+      setCreated(!created);
+      setShowModal(true);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
-  const handleDelete = async (teacherId) => {
-    await DeleteTeacher(teacherId);
-    setCreated(!created);
-  };
   return (
     <>
       <Sidebar />
@@ -157,7 +155,6 @@ function AddTeacher() {
                           <th>رقم الهاتف</th>
                           <th>البريد الإلكتروني</th>
                           <th>عنوان</th>
-                          <td>حذف</td>
                         </tr>
                       </thead>
                       <tbody>
@@ -169,12 +166,6 @@ function AddTeacher() {
                               <td>{teacher.phoneNo}</td>
                               <td>{teacher.email}</td>
                               <td>{teacher.address}</td>
-                              <td>
-                                <i
-                                  className="fas fa-fw fa-trash"
-                                  onClick={() => handleDelete(teacher._id)}
-                                ></i>
-                              </td>
                             </tr>
                           ))}
                       </tbody>

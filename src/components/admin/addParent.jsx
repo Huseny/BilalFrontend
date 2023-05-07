@@ -33,28 +33,31 @@ function AddParent() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setParentDetails({
-      ...parentDetails,
-      username: generateUsername(parentDetails.fullName),
-      password: generatePassword(6),
-    });
     try {
+      const username = generateUsername(parentDetails.fullName);
+      const password = generatePassword(6);
       await addParentRequest(
-        parentDetails.username,
-        parentDetails.password,
+        username,
+        password,
         parentDetails.fullName,
         parentDetails.sex,
         parentDetails.phoneNo,
         parentDetails.email,
         parentDetails.address
       );
+      setParentDetails({
+        ...parentDetails,
+        username,
+        password,
+      });
       setShowModal(true);
       setParents([...parents, parentDetails]);
       setCreated(!created);
     } catch (err) {
-      console.error(err);
+      console.log(err);
     }
   };
+
   return (
     <>
       <Sidebar />
