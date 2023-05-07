@@ -1,4 +1,4 @@
 [[headers]]
   for = "/*"
   [headers.values]
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://34.229.70.18:8000; connect-src https://54.164.90.14:8000; font-src https://fonts.googleapis.com;"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://34.229.70.18:8000; connect-src https://54.164.90.14:8000; font-src https://fonts.googleapis.com https://boxicons.com/;"
