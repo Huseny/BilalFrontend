@@ -20,6 +20,12 @@ export function ParentRegistrationModal({ show, handleClose, info }) {
         <p>
           البريد الإلكتروني: <b>{info.email}</b>
         </p>
+        <p>
+          اسم المستخدم: <b>{info.username}</b>
+        </p>
+        <p>
+          كلمة المرور: <b>{info.password}</b>
+        </p>
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={handleClose}>

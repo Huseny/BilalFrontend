@@ -1,17 +1,9 @@
-import { useEffect, useState } from "react";
-import { getClassById } from "../../utils/createClass";
+import { useState } from "react";
 import Sidebar from "./sidebar";
 import "./styles/attendance.css";
-import {
-  fetchSections,
-  fetchStudentsBySection,
-} from "../../utils/fetchSections";
 
 function Attendance() {
-  const [fetchedSections, setFetchedSections] = useState([]);
-  const [selectedSection, setSelectedSection] = useState("");
-  const [students, setStudents] = useState([]);
-  const [checkedStudents, setCheckedStudents] = useState([]);
+  const [isTaken, setIsTaken] = useState(false);
 
   // useEffect(() => {
   //   async function fetchWhatever() {
@@ -28,13 +20,13 @@ function Attendance() {
   // }, [selectedSection]);
 
   const handleAttendanceChecked = (e, studentId) => {
-    if (e.target.checked) {
-      setCheckedStudents((prevState) => [...prevState, studentId]);
-    } else {
-      setCheckedStudents((prevState) =>
-        prevState.filter((id) => id !== studentId)
-      );
-    }
+    // if (e.target.checked) {
+    //   setCheckedStudents((prevState) => [...prevState, studentId]);
+    // } else {
+    //   setCheckedStudents((prevState) =>
+    //     prevState.filter((id) => id !== studentId)
+    //   );
+    // }
   };
 
   return (
@@ -54,7 +46,6 @@ function Attendance() {
                       </div>
                       <div className="form-group">
                         <select
-                          onChange={(e) => setSelectedSection(e.target.value)}
                           required
                           name="classNameId"
                           className="form-control mb-3"
@@ -62,17 +53,9 @@ function Attendance() {
                           <option value="" className="text-center">
                             --اختر الفصل--
                           </option>
-                          {fetchedSections.map((section) => {
-                            return (
-                              <option
-                                key={section._id}
-                                value={section._id}
-                                className="text-center"
-                              >
-                                {section.className}
-                              </option>
-                            );
-                          })}
+                          <option value="123">Ibn Mes'ud</option>
+                          <option value="123">Ibn Abbas</option>
+                          <option value="123">Ibn Kathir</option>
                         </select>
                       </div>
                     </div>
@@ -94,43 +77,98 @@ function Attendance() {
                       </thead>
 
                       <tbody>
-                        {students &&
-                          students.length > 0 &&
-                          students.map(async (student, index) => (
-                            <tr key={student._id}>
-                              {console.log(student)}
-                              <td>{index + 1}</td>
-                              <td>{student.fullName}</td>
-                              <td>{student.age}</td>
-                              <td>
-                                {
-                                  (await getClassById(student.chooseClass))
-                                    .className
-                                }
-                              </td>
-                              <td>
-                                <label
-                                  className="checkbox-container"
-                                  htmlFor={student._id}
-                                >
-                                  <input
-                                    name="check"
-                                    id={student._id}
-                                    type="checkbox"
-                                    className="form-control"
-                                    onClick={(e) =>
-                                      handleAttendanceChecked(e, student._id)
-                                    }
-                                  />
-                                  <span className="checkmark"></span>
-                                </label>
-                              </td>
-                            </tr>
-                          ))}
+                        <tr>
+                          <td>1</td>
+                          <td>Amir Ahmedin</td>
+                          <td>10</td>
+                          <td>Ibn Abbas</td>
+                          <td>
+                            <label
+                              className="checkbox-container"
+                              htmlFor="whatever"
+                            >
+                              <input
+                                name="check"
+                                id="whatever"
+                                type="checkbox"
+                                className="form-control"
+                                onClick={(e) => handleAttendanceChecked(e, "0")}
+                              />
+                              <span className="checkmark"></span>
+                            </label>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>2</td>
+                          <td>Abdulmelik Ambaw</td>
+                          <td>18</td>
+                          <td>Ibn Mes'ud</td>
+                          <td>
+                            <label
+                              className="checkbox-container"
+                              htmlFor="whatever2"
+                            >
+                              <input
+                                name="check"
+                                id="whatever2"
+                                type="checkbox"
+                                className="form-control"
+                                onClick={(e) => handleAttendanceChecked(e, "0")}
+                              />
+                              <span className="checkmark"></span>
+                            </label>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>3</td>
+                          <td>Ahmed Yusuf</td>
+                          <td>20</td>
+                          <td>Ibn Kathir</td>
+                          <td>
+                            <label
+                              className="checkbox-container"
+                              htmlFor="whatever3"
+                            >
+                              <input
+                                name="check"
+                                id="whatever3"
+                                type="checkbox"
+                                className="form-control"
+                                onClick={(e) => handleAttendanceChecked(e, "0")}
+                              />
+                              <span className="checkmark"></span>
+                            </label>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>4</td>
+                          <td>Husen Yusuf</td>
+                          <td>20</td>
+                          <td>Ibn Mes'ud</td>
+                          <td>
+                            <label
+                              className="checkbox-container"
+                              htmlFor="whatever4"
+                            >
+                              <input
+                                name="check"
+                                id="whatever4"
+                                type="checkbox"
+                                className="form-control"
+                                onClick={(e) => handleAttendanceChecked(e, "0")}
+                              />
+                              <span className="checkmark"></span>
+                            </label>
+                          </td>
+                        </tr>
                       </tbody>
                     </table>
                     <br />
-                    <button name="save" className="btn btn-primary">
+                    <button
+                      onClick={() => setIsTaken(true)}
+                      name="save"
+                      className="btn btn-primary"
+                    >
                       Take Attendance
                     </button>
                   </div>
@@ -140,21 +178,23 @@ function Attendance() {
           </div>
         </div>
 
-        <section id="done">
-          <div className="done">
-            <div className="card mb-4">
-              <div className="card-header py-3 text-center">
-                <h5>Attendance taken succesfully</h5>
-                <br />
-                <div className="text-center">
-                  <button id="closeSuccess" className="btn btn-warning mx-1">
-                    Close
-                  </button>
+        {isTaken && (
+          <section>
+            <div className="done">
+              <div className="card mb-4">
+                <div className="card-header py-3 text-center">
+                  <h5>Attendance taken succesfully</h5>
+                  <br />
+                  <div className="text-center">
+                    <button id="closeSuccess" className="btn btn-warning mx-1">
+                      Close
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
       </section>
     </>
   );

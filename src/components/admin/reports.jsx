@@ -7,9 +7,7 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 const AttendanceReport = () => {
   const [showAttendance, setShowAttendance] = useState(false);
-  const [showReport, setShowReport] = useState(false);
   const [currentStudentAttendance, setCurrentStudentAttendance] = useState({});
-  const [currentStudentGrade, setCurrentStudentGrade] = useState({});
 
   const generateAttendanceReport = (studentName, attendanceData) => {
     const documentDefinition = {
@@ -138,7 +136,7 @@ const AttendanceReport = () => {
                               });
                               setShowAttendance(!showAttendance);
                             }}
-                            class="bx bxs-report"
+                            className="bx bxs-report"
                           ></i>
                         </td>
                         <td>
@@ -146,7 +144,7 @@ const AttendanceReport = () => {
                             onClick={() => {
                               setShowAttendance(!showAttendance);
                             }}
-                            class="bx bxs-objects-vertical-bottom"
+                            className="bx bxs-objects-vertical-bottom"
                           ></i>
                         </td>
                       </tr>
@@ -191,7 +189,10 @@ const AttendanceReport = () => {
                       <button
                         className="btn btn-primary"
                         onClick={() =>
-                          generateAttendanceReport("John Smith", attendanceData)
+                          generateAttendanceReport(
+                            "Husen Yusuf",
+                            attendanceData
+                          )
                         }
                       >
                         {"Generating report"}
